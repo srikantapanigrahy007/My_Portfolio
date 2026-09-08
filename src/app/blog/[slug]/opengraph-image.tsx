@@ -2,7 +2,7 @@
 
 import { ImageResponse } from "next/og";
 import { allPosts } from "content-collections";
-import { DATA } from "@/data/resume";
+import { getPortfolioData } from "@/lib/api";
 
 export const runtime = "edge";
 
@@ -127,11 +127,15 @@ export default async function Image({
     params: Promise<{ slug: string }>;
 }) {
     try {
-        const fontData = await getFontData();
-        const { slug } = await params;
+        const [fontData, { profile }, { slug }] = await Promise.all([
+            getFontData(),
+            getPortfolioData(),
+            params,
+        ]);
         const post = allPosts.find((p) => p._meta.path.replace(/\.mdx$/, "") === slug);
-        const imageUrl = DATA.avatarUrl
-            ? new URL(DATA.avatarUrl, DATA.url).toString()
+        const siteUrl = profile?.url || "https://srikantapanigrahy.com";
+        const imageUrl = profile?.avatarUrl
+            ? new URL(profile.avatarUrl, siteUrl).toString()
             : undefined;
 
         if (!post) {

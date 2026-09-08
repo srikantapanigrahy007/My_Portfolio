@@ -1,13 +1,16 @@
 import { MetadataRoute } from "next";
-import { DATA } from "@/data/resume";
+import { getPortfolioData } from "@/lib/api";
 
-export default function robots(): MetadataRoute.Robots {
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const { profile } = await getPortfolioData();
+  const baseUrl = profile?.url || "https://srikantapanigrahy.com";
+
   return {
     rules: {
       userAgent: "*",
       allow: "/",
       disallow: ["/api/"],
     },
-    sitemap: `${DATA.url}/sitemap.xml`,
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }

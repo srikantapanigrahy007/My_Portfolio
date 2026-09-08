@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { DATA } from "@/data/resume";
+import { submitContact, ApiError } from "@/lib/api";
 import { motion, AnimatePresence } from "motion/react";
 
 export default function ContactSection() {
@@ -24,23 +24,11 @@ export default function ContactSection() {
     setStatus("Sending your message...");
 
     try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: name.trim(),
-          email: email.trim(),
-          message: message.trim(),
-        }),
+      await submitContact({
+        name: name.trim(),
+        email: email.trim(),
+        message: message.trim(),
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Unable to send your message right now.");
-      }
 
       setIsSuccess(true);
       setStatus("I have received your request and I will get back to you ASAP.");
@@ -48,7 +36,11 @@ export default function ContactSection() {
       setEmail("");
       setMessage("");
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Unable to send your message right now.");
+      setStatus(
+        error instanceof ApiError
+          ? error.message
+          : "Unable to send your message right now."
+      );
     } finally {
       setIsSubmitting(false);
     }

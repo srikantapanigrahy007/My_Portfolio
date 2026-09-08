@@ -1,9 +1,10 @@
 import { MetadataRoute } from "next";
 import { allPosts } from "content-collections";
-import { DATA } from "@/data/resume";
+import { getPortfolioData } from "@/lib/api";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = DATA.url;
+  const { profile } = await getPortfolioData();
+  const baseUrl = profile?.url || "https://srikantapanigrahy.com";
 
   // 1. Static Routes
   const staticRoutes: MetadataRoute.Sitemap = [

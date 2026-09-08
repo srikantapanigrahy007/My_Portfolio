@@ -7,13 +7,20 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { DATA } from "@/data/resume";
+import { getSocialIcon } from "@/lib/icon-map";
+import type { Social } from "@/lib/api";
+import { HomeIcon, NotebookIcon } from "lucide-react";
 
-export default function Navbar() {
+const NAV_ITEMS = [
+  { href: "/", icon: HomeIcon, label: "Home" },
+  { href: "/blog", icon: NotebookIcon, label: "Blog" },
+];
+
+export default function Navbar({ socials }: { socials: Social[] }) {
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-4 z-30">
       <Dock className="z-50 pointer-events-auto relative h-14 p-2 w-fit mx-auto flex gap-2 border bg-card/90 backdrop-blur-3xl shadow-[0_0_10px_3px] shadow-primary/5">
-        {DATA.navbar.map((item) => {
+        {NAV_ITEMS.map((item) => {
           const isExternal = item.href.startsWith("http");
           return (
             <Tooltip key={item.href}>
@@ -43,13 +50,13 @@ export default function Navbar() {
           orientation="vertical"
           className="h-2/3 m-auto w-px bg-border"
         />
-        {Object.entries(DATA.contact.social)
-          .filter(([_, social]) => social.navbar)
-          .map(([name, social], index) => {
+        {socials
+          .filter((social) => social.navbar)
+          .map((social, index) => {
             const isExternal = social.url.startsWith("http");
-            const IconComponent = social.icon;
+            const IconComponent = getSocialIcon(social.icon);
             return (
-              <Tooltip key={`social-${name}-${index}`}>
+              <Tooltip key={`social-${social.key}-${index}`}>
                 <TooltipTrigger asChild>
                   <a
                     href={social.url}
@@ -66,7 +73,7 @@ export default function Navbar() {
                   sideOffset={8}
                   className="rounded-xl bg-primary text-primary-foreground px-4 py-2 text-sm shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)] dark:shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)]"
                 >
-                  <p>{name}</p>
+                  <p>{social.name}</p>
                   <TooltipArrow className="fill-primary" />
                 </TooltipContent>
               </Tooltip>

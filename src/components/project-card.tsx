@@ -3,6 +3,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { getSocialIcon } from "@/lib/icon-map";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -35,7 +36,7 @@ interface Props {
   image?: string;
   video?: string;
   links?: readonly {
-    icon: React.ReactNode;
+    icon: string;
     type: string;
     href: string;
   }[];
@@ -85,23 +86,26 @@ export function ProjectCard({
         </Link>
         {links && links.length > 0 && (
           <div className="absolute top-2 right-2 flex flex-wrap gap-2">
-            {links.map((link, idx) => (
-              <Link
-                href={link.href}
-                key={idx}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Badge
-                  className="flex items-center gap-1.5 text-xs bg-black text-white hover:bg-black/90"
-                  variant="default"
+            {links.map((link, idx) => {
+              const LinkIcon = getSocialIcon(link.icon);
+              return (
+                <Link
+                  href={link.href}
+                  key={idx}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  {link.icon}
-                  {link.type}
-                </Badge>
-              </Link>
-            ))}
+                  <Badge
+                    className="flex items-center gap-1.5 text-xs bg-black text-white hover:bg-black/90"
+                    variant="default"
+                  >
+                    <LinkIcon className="size-3" />
+                    {link.type}
+                  </Badge>
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>

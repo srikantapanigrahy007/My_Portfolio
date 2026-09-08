@@ -1,8 +1,6 @@
-import { DATA } from "@/data/resume";
 import GithubCalendarView, { CalendarData, ContributionDay } from "./github-calendar-view";
 
-export default async function GithubSection() {
-  const githubUrl = DATA.contact.social.GitHub.url;
+export default async function GithubSection({ githubUrl }: { githubUrl: string }) {
   const username = githubUrl.split("/").pop() || "srikantapanigrahy007";
 
   let calendarData: CalendarData = {

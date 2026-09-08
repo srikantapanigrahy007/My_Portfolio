@@ -1,6 +1,6 @@
 import { allPosts } from "content-collections";
 import { formatDate } from "@/lib/utils";
-import { DATA } from "@/data/resume";
+import { getPortfolioData } from "@/lib/api";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { MDXContent } from "@content-collections/mdx/react";
@@ -44,6 +44,9 @@ export async function generateMetadata({
     image,
   } = post;
 
+  const { profile } = await getPortfolioData();
+  const siteUrl = profile?.url || "https://srikantapanigrahy.com";
+
   return {
     title,
     description,
@@ -52,11 +55,11 @@ export async function generateMetadata({
       description,
       type: "article",
       publishedTime,
-      url: `${DATA.url}/blog/${slug}`,
+      url: `${siteUrl}/blog/${slug}`,
       ...(image && {
         images: [
           {
-            url: `${DATA.url}${image}`,
+            url: `${siteUrl}${image}`,
           },
         ],
       }),
@@ -66,7 +69,7 @@ export async function generateMetadata({
       title,
       description,
       ...(image && {
-        images: [`${DATA.url}${image}`],
+        images: [`${siteUrl}${image}`],
       }),
     },
   };
@@ -80,6 +83,9 @@ export default async function Blog({
   }>;
 }) {
   const { slug } = await params;
+  const { profile } = await getPortfolioData();
+  const siteUrl = profile?.url || "https://srikantapanigrahy.com";
+  const siteName = profile?.name || "Srikanta Panigrahy";
   const sortedPosts = getSortedPosts();
   const currentIndex = sortedPosts.findIndex(
     (p) => p._meta.path.replace(/\.mdx$/, "") === slug
@@ -104,12 +110,12 @@ export default async function Blog({
     dateModified: post.publishedAt,
     description: post.summary,
     image: post.image
-      ? `${DATA.url}${post.image}`
-      : `${DATA.url}/blog/${slug}/opengraph-image`,
-    url: `${DATA.url}/blog/${slug}`,
+      ? `${siteUrl}${post.image}`
+      : `${siteUrl}/blog/${slug}/opengraph-image`,
+    url: `${siteUrl}/blog/${slug}`,
     author: {
       "@type": "Person",
-      name: DATA.name,
+      name: siteName,
     },
   }).replace(/</g, "\\u003c");
 

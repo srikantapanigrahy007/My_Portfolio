@@ -1,6 +1,6 @@
  
 import { ImageResponse } from "next/og";
-import { DATA } from "@/data/resume";
+import { getPortfolioData } from "@/lib/api";
 
 export const runtime = "edge";
 
@@ -107,11 +107,15 @@ const styles = {
 
 export default async function Image() {
     try {
-        const fontData = await getFontData();
+        const [fontData, { profile }] = await Promise.all([
+            getFontData(),
+            getPortfolioData(),
+        ]);
         const title = "Blog";
         const description = "Thoughts on software development, life, and more.";
-        const imageUrl = DATA.avatarUrl
-            ? new URL(DATA.avatarUrl, DATA.url).toString()
+        const siteUrl = profile?.url || "https://srikantapanigrahy.com";
+        const imageUrl = profile?.avatarUrl
+            ? new URL(profile.avatarUrl, siteUrl).toString()
             : undefined;
 
         return new ImageResponse(

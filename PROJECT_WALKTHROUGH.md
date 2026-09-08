@@ -2,26 +2,30 @@
 
 ## 📋 Project Overview
 
-This is a **modern portfolio website** built with Next.js showcasing your professional profile, projects, work experience, skills, and blog content. It's a production-ready full-stack application with multiple key sections.
+A full-stack portfolio: a Next.js frontend and an Express + MongoDB backend
+with a working `/admin` dashboard. All content — profile info, skills,
+work experience, education, certifications, and projects — lives in
+MongoDB and is edited through the admin UI, not by hand-editing code.
 
 ---
 
 ## 🛠️ Technology Stack
 
-### Frontend
+### Frontend (`/`, deployed on Vercel)
 - **Framework**: Next.js 16.1.1 (React 19)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS v4 + PostCSS
 - **UI Components**: shadcn/ui + Radix UI
 - **Animations**: Motion, Tailwind Animate
 - **Icons**: FontAwesome + Lucide React
+- **Analytics**: `@vercel/analytics`
+- **Content**: Content Collections (MDX) for blog posts only
 
-### Backend/Features
+### Backend (`/backend`, deployed on Render)
+- **Framework**: Express
+- **Database**: MongoDB (Mongoose), hosted on MongoDB Atlas
+- **Auth**: JWT-signed admin sessions
 - **Email**: Nodemailer (contact form)
-- **Syntax Highlighting**: Shiki + rehype-pretty-code
-- **Markdown**: React Markdown + remark-gfm
-- **Content**: Content Collections (MDX)
-- **Theme**: Next Themes (dark/light mode)
 
 ---
 
@@ -29,355 +33,124 @@ This is a **modern portfolio website** built with Next.js showcasing your profes
 
 ```
 src/
-├── app/                          # Next.js App Router Pages
-│   ├── page.tsx                 # Homepage (Hero + All sections)
-│   ├── layout.tsx               # Root layout
-│   ├── globals.css              # Global styles
-│   ├── robots.ts                # SEO robots file
-│   ├── sitemap.ts               # SEO sitemap
-│   ├── not-found.tsx            # 404 page
+├── app/
+│   ├── page.tsx                 # Homepage — fetches all content from the API
+│   ├── admin/page.tsx           # Admin dashboard (login + editors)
+│   ├── layout.tsx               # Root layout — fetches profile for SEO/JSON-LD
+│   ├── globals.css              # Theme (CSS variables)
+│   ├── robots.ts / sitemap.ts   # SEO
 │   ├── opengraph-image.tsx      # OG image generator
-│   ├── blog/                    # Blog pages
-│   │   ├── page.tsx             # Blog listing
-│   │   ├── [slug]/              # Individual blog posts
-│   │   └── opengraph-image.tsx  # OG images for blogs
-│   ├── api/                     # API Routes
-│   │   └── contact/route.ts     # Contact form endpoint
+│   └── blog/                    # Blog pages (still MDX-based, unrelated to the API)
 │
-├── components/                   # Reusable Components
-│   ├── ui/                      # Basic UI Components (shadcn)
-│   │   ├── button.tsx
-│   │   ├── card.tsx
-│   │   ├── accordion.tsx
-│   │   ├── avatar.tsx
-│   │   ├── badge.tsx
-│   │   ├── separator.tsx
-│   │   ├── tooltip.tsx
-│   │   └── svgs/                # Technology icons
-│   ├── magicui/                 # Animated components
-│   │   ├── blur-fade.tsx        # Fade in animation
-│   │   ├── blur-fade-text.tsx
-│   │   ├── dock.tsx             # Dock menu
-│   │   └── flickering-grid.tsx  # Background grid
-│   ├── section/                 # Page Sections
-│   │   ├── contact-section.tsx  # Contact form
-│   │   ├── projects-section.tsx # Featured projects
-│   │   └── work-section.tsx     # Work experience
-│   ├── mdx/                     # MDX-specific components
-│   │   ├── code-block.tsx       # Syntax highlighted code
-│   │   └── media-container.tsx
-│   ├── navbar.tsx               # Navigation bar
-│   ├── icons.tsx                # Icon exports
-│   ├── mode-toggle.tsx          # Theme toggle
-│   ├── theme-provider.tsx       # Theme provider
-│   └── project-card.tsx         # Project card component
-│
-├── data/
-│   └── resume.tsx               # 📝 MAIN DATA FILE - All portfolio content
+├── components/
+│   ├── admin/                   # Admin dashboard pieces
+│   │   ├── login-form.tsx
+│   │   ├── profile-editor.tsx
+│   │   ├── collection-editor.tsx  # Generic list+form CRUD, used for skills/experience/education/certifications/projects
+│   │   ├── record-form.tsx        # Field-driven form (text/textarea/boolean/select/array/links)
+│   │   └── visitor-stats.tsx
+│   ├── ui/, magicui/, section/, mdx/   # As before
+│   ├── navbar.tsx                # Now takes `socials` as a prop
+│   └── project-card.tsx
 │
 ├── lib/
-│   ├── utils.ts                 # Utility functions
-│   ├── pagination.ts            # Pagination logic
-│   └── remark-code-meta.ts      # Markdown plugin
+│   ├── api.ts                   # Typed client for the backend — getPortfolioData(), admin CRUD helpers, FALLBACK_DATA
+│   ├── icon-map.tsx              # Maps the string icon keys stored in MongoDB to actual icon components
+│   └── utils.ts, pagination.ts, remark-code-meta.ts
 │
-└── mdx-components.tsx           # MDX custom components
+└── mdx-components.tsx
+
+backend/
+├── src/
+│   ├── index.js                 # Express app entry
+│   ├── db.js                    # Mongoose connection
+│   ├── models/                  # Profile, Skill, Experience, Education, Certification, Project, Visit, Counter
+│   ├── routes/                  # auth, portfolio (public aggregate), profile, visitors, contact, crud.js (generic factory)
+│   └── middleware/auth.js       # JWT verification
+├── scripts/
+│   ├── seed.js                  # One-time DB population
+│   └── smoke-test.js            # End-to-end test against an in-memory MongoDB
+└── README.md                    # Render + Atlas deployment steps
 
 content/
-├── deploy-website-on-aws-ec2-step-by-step.mdx  # Blog posts
-└── [Add more .mdx files here]
-
-public/
-├── fonts/                       # Custom fonts
-└── [Your images/assets]
+└── *.mdx                        # Blog posts — still authored by adding files, unrelated to the database
 ```
 
 ---
 
-## 🎯 Key Sections to Update
+## ✏️ How to update content
 
-### 1. **Personal Information** [`src/data/resume.tsx`](src/data/resume.tsx)
-- **Name**: `DATA.name` - Your full name
-- **Headline**: Update the hero description in `page.tsx`
-- **Email**: `DATA.contact.email`
-- **Phone**: `DATA.contact.tel`
-- **Social Links**: `DATA.contact.social` (GitHub, LinkedIn, Twitter, etc.)
-- **Avatar**: Replace image at `public/srikanta-panigrahy.png`
+Everything content-related is edited at **`/admin`** on the running site
+(local: `http://localhost:3000/admin`), logged in with the backend's
+`ADMIN_PASSWORD`:
 
-### 2. **Skills Section** [`src/data/resume.tsx`](src/data/resume.tsx) - Line ~35
-```typescript
-skills: [
-  { name: "HTML5", icon: faHtml5 },
-  { name: "React", icon: faReact },
-  // Add/remove skills here
-]
-```
+- **Profile tab** — name, initials, site URL, resume URL, avatar URL, email, phone, description, hero tagline, about summary, and social links (add/remove/reorder, toggle which show in the navbar dock).
+- **Skills / Experience / Education / Certifications / Projects tabs** — add, edit, or delete entries. Projects support technologies (comma-separated), multiple links (website/source, each with an icon), and an `active` toggle to show/hide on the homepage without deleting.
 
-### 3. **Work Experience** [`src/data/resume.tsx`](src/data/resume.tsx) - Line ~77
-```typescript
-work: [
-  {
-    company: "CSRBOX",
-    title: "AI Strategy & Business Intelligence Intern",
-    description: "...",
-    start: "Mar 2026",
-    end: "Apr 2026",
-    // Update these fields
-  }
-]
-```
+Changes save to MongoDB immediately and appear on the public site within
+about a minute (the homepage revalidates every 60s).
 
-**Current Work Experience:**
-- ✅ CSRBOX - AI Strategy & BI Intern (Mar 2026 - Apr 2026)
-- ✅ Physics Wallah - Freelancer
+To seed or reset all of the above from code instead of the UI, edit
+[`backend/scripts/seed.js`](backend/scripts/seed.js) and run `npm run seed`
+in `backend/`.
 
-### 4. **Featured Projects** [`src/data/resume.tsx`](src/data/resume.tsx) - Line ~130
-```typescript
-projects: [
-  {
-    title: "WorkSync",
-    description: "SaaS team collaboration platform",
-    technologies: ["React", "Node.js", "MongoDB", ...],
-    href: "https://slackapp.online",
-    active: true,  // Shows on homepage if true
-    // Update these fields
-  }
-]
-```
+**Blog posts** are the one thing still file-based: add a new `.mdx` file to
+[`content/`](content/) with frontmatter (`title`, `publishedAt`, `summary`,
+`tags`) and push — content-collections picks it up at build time.
 
-**Current Projects:**
-1. **WorkSync** - SaaS collaboration platform (2025)
-2. **Credo** - Personal finance app (2024)
-
-### 5. **Blog Posts** [`content/`](content/)
-- Add new blog posts as `.mdx` files in the `content/` directory
-- Example: `content/my-first-blog-post.mdx`
-- Blog auto-loads from MDX files with frontmatter
-
-### 6. **Navigation** [`src/data/resume.tsx`](src/data/resume.tsx) - Line ~73
-```typescript
-navbar: [
-  { href: "/", icon: HomeIcon, label: "Home" },
-  { href: "/blog", icon: NotebookIcon, label: "Blog" },
-  // Add more navigation items
-]
-```
+**Avatar / résumé PDF / logos**: these are static files served from
+`public/` (e.g. `public/srikanta-panigrahy.png`), referenced by URL from
+the Profile/Experience/Education fields in the admin. Replace the file in
+`public/` and keep the same filename, or upload a new file and update the
+URL field in `/admin` to match.
 
 ---
 
-## 🚀 Homepage Sections (in order)
+## 🎨 Customization
 
-1. **Hero Section** - Your name, headline, and CTA
-2. **About** - Professional summary from `DATA.summary`
-3. **Skills** - Displayed from `DATA.skills` array
-4. **Work Experience** - Timeline from `DATA.work` array
-5. **Featured Projects** - Cards from `DATA.projects` (filtered by `active: true`)
-6. **Contact Section** - Contact form with validation
+**Theme colors**: `src/app/globals.css` — CSS variables under `:root` and `.dark`.
 
----
-
-## 📝 How to Update Each Section
-
-### Update Personal Info
-**File**: [src/data/resume.tsx](src/data/resume.tsx)
-
-```typescript
-export const DATA = {
-  name: "Your Name",                    // ← Update
-  initials: "YN",                       // ← Update
-  url: "https://yourwebsite.com",       // ← Update
-  description: "Your description...",   // ← Update
-  summary: "Your about section...",     // ← Update
-  avatarUrl: "/your-avatar.webp",       // ← Update
-  // ... rest of DATA
-}
-```
-
-### Update Skills
-**File**: [src/data/resume.tsx](src/data/resume.tsx) - ~Line 35
-
-Add or remove items from the `skills` array. Available icons:
-- FontAwesome: `faReact`, `faNodeJs`, `faPython`, `faJava`, etc.
-- Lucide: Import from "lucide-react"
-- Custom: Add SVG in `src/components/ui/svgs/`
-
-### Update Work Experience
-**File**: [src/data/resume.tsx](src/data/resume.tsx) - ~Line 77
-
-```typescript
-work: [
-  {
-    company: "Company Name",
-    href: "https://company.com",        // Optional link
-    title: "Your Job Title",
-    location: "City, Country",
-    logoUrl: "/company-logo.png",       // Add to public/
-    start: "Jan 2025",
-    end: "Present",
-    description: "Your responsibilities...",
-    badges: ["Badge1", "Badge2"],       // Optional
-  },
-  // Add more jobs
-]
-```
-
-### Update Projects
-**File**: [src/data/resume.tsx](src/data/resume.tsx) - ~Line 130
-
-```typescript
-projects: [
-  {
-    title: "Project Name",
-    description: "What it does...",
-    href: "https://project-url.com",
-    dates: "2025",
-    active: true,                       // Show on homepage
-    technologies: ["React", "Node.js"], // Tech stack
-    image: "https://image-url.jpg",    // Optional
-    video: "https://video-url.mp4",    // Optional
-    links: [
-      {
-        type: "Website",
-        href: "https://...",
-        icon: <Icons.globe className="size-3" />,
-      },
-      {
-        type: "Source",
-        href: "https://github.com/...",
-        icon: <Icons.github className="size-3" />,
-      },
-    ],
-  },
-  // Add more projects
-]
-```
-
-### Add Blog Posts
-**File**: Create new file in [`content/`](content/)
-
-Example: `content/my-blog-post.mdx`
-```markdown
----
-title: "My Blog Post Title"
-summary: "Brief description for listings"
-date: "2025-01-15"
-tags: ["react", "nextjs"]
----
-
-# Blog post content goes here
-
-You can use **markdown** and MDX components.
-
-```typescript
-// code blocks with syntax highlighting
-const hello = "world";
-```
-```
-
----
-
-## 🎨 Customization Tips
-
-### Change Theme Colors
-**File**: `src/app/globals.css`
-- Modify CSS variables for primary, secondary colors
-- Tailwind handles the theme
-
-### Add Social Links
-**File**: [src/data/resume.tsx](src/data/resume.tsx) - ~Line 58
-```typescript
-contact: {
-  social: {
-    GitHub: { ... },
-    LinkedIn: { ... },
-    X: { ... },
-    // Add more here
-    YouTube: {
-      name: "YouTube",
-      url: "https://youtube.com/...",
-      icon: Icons.youtube,  // Add to icons.tsx
-      navbar: true,
-    }
-  }
-}
-```
-
-### Update Navigation
-**File**: [src/data/resume.tsx](src/data/resume.tsx) - ~Line 73
-```typescript
-navbar: [
-  { href: "/", icon: HomeIcon, label: "Home" },
-  { href: "/blog", icon: NotebookIcon, label: "Blog" },
-  { href: "/projects", icon: ProjectIcon, label: "Projects" }, // Add this
-]
-```
+**Icon choices**: skills and social/project links store a plain string key
+(e.g. `"react"`, `"github"`) rather than a component, resolved by
+[`src/lib/icon-map.tsx`](src/lib/icon-map.tsx). To offer a new icon in the
+admin dropdowns, add it to `skillIconMap` (FontAwesome) or
+`linkIconMap`/`SOCIAL_ICON_OPTIONS` (from `src/components/icons.tsx`) — the
+`/admin` forms read their `<select>` options from these files.
 
 ---
 
 ## 🔧 Development Workflow
 
-### Start Development Server
-```bash
-pnpm dev
-# or
-npm run dev
-```
-Visit http://localhost:3000
+**Backend** (`backend/`): `npm install`, `cp .env.example .env` and fill in
+`MONGODB_URI`/`JWT_SECRET`/`ADMIN_PASSWORD`, `npm run seed` once, `npm run dev`.
 
-### Build for Production
+**Frontend** (repo root): `npm install`, `cp .env.example .env.local` and
+set `NEXT_PUBLIC_API_URL=http://localhost:4000`, `npm run dev`.
+
 ```bash
-pnpm build
-pnpm start
-# or
-npm run build
-npm start
+npm run build   # frontend production build
+npm run lint     # frontend lint
 ```
 
-### Lint Code
-```bash
-pnpm lint
-pnpm lint:fix
-```
+Backend has its own test: `cd backend && npm run smoke-test` spins up an
+in-memory MongoDB and exercises every route.
 
 ---
 
-## 📊 Analytics
-Pageview analytics run through [`@vercel/analytics`](https://vercel.com/docs/analytics), wired into `src/app/layout.tsx` via `<Analytics />`. Enable it in the Vercel dashboard's **Analytics** tab after deploying — no database or extra config needed. (There used to be a homegrown file-based visitor tracker; it wrote to a local JSON file, which doesn't work on Vercel's read-only serverless filesystem, so it was replaced with this.)
+## 🚀 Deployment
 
----
+Two services, deployed separately:
 
-## ✉️ Contact Form
-**File**: `src/app/api/contact/route.ts`
+- **Backend → Render**, with MongoDB Atlas as the database. Full steps in [`backend/README.md`](backend/README.md).
+- **Frontend → Vercel**, pointed at the Render backend via `NEXT_PUBLIC_API_URL`. Full steps in the [README](README.md#deploying).
 
-Uses Nodemailer to send emails. Configure:
-- Email service settings
-- Recipient email address
-- Email template
+If the backend's `FRONTEND_URL` env var doesn't list your Vercel URL,
+requests from the browser will fail CORS — update it on Render and redeploy.
 
-**UI Component**: [src/components/section/contact-section.tsx](src/components/section/contact-section.tsx)
-
----
-
-## 🎯 Priority Update Checklist
-
-- [ ] Update `DATA.name` and personal info in [resume.tsx](src/data/resume.tsx)
-- [ ] Update profile image in `public/srikanta-panigrahy.png`
-- [ ] Update skills list
-- [ ] Add/update work experience entries
-- [ ] Add/update featured projects
-- [ ] Update social media links
-- [ ] Update hero description and summary
-- [ ] Add blog posts in `content/` folder
-- [ ] Configure contact form email settings
-- [ ] Test all links and external URLs
-- [ ] Build and test for production
-
----
-
-## 🚀 Deployment Tips
-
-This site deploys on **Vercel** — see the [README](README.md#deploying-on-vercel) for the full steps (import the repo, set env vars from `.env.example`, deploy).
-
-Update the `url` field in [resume.tsx](src/data/resume.tsx) to your production domain once Vercel assigns/attaches it, then enable the **Analytics** tab in the Vercel dashboard for pageview tracking.
+Render's free tier spins down when idle; the frontend falls back to
+built-in static content if the API is slow to wake up, so the site never
+goes fully blank, but recent admin edits won't show until the backend
+responds.
 
 ---
 
@@ -389,21 +162,7 @@ Update the `url` field in [resume.tsx](src/data/resume.tsx) to your production d
 | `ProjectCard` | Project display card | `src/components/project-card.tsx` |
 | `ProjectsSection` | Featured projects grid | `src/components/section/projects-section.tsx` |
 | `WorkSection` | Work experience timeline | `src/components/section/work-section.tsx` |
-| `ContactSection` | Contact form | `src/components/section/contact-section.tsx` |
-
----
-
-## 🆘 Quick Reference
-
-| Task | File | Notes |
-|------|------|-------|
-| Add project | [resume.tsx](src/data/resume.tsx) L130 | Set `active: true` to show |
-| Add work exp | [resume.tsx](src/data/resume.tsx) L77 | Displays in timeline |
-| Add skill | [resume.tsx](src/data/resume.tsx) L35 | Pick icon from FontAwesome |
-| Write blog post | `content/*.mdx` | Auto-discovered |
-| Change colors | `src/app/globals.css` | CSS variables |
-| Update about | [resume.tsx](src/data/resume.tsx) L19 | `DATA.summary` field |
-
----
-
-**Start updating your portfolio now! Edit [src/data/resume.tsx](src/data/resume.tsx) first - it contains most of your content.**
+| `ContactSection` | Contact form (posts to the backend) | `src/components/section/contact-section.tsx` |
+| `CollectionEditor` | Generic admin list+form CRUD | `src/components/admin/collection-editor.tsx` |
+| `ProfileEditor` | Admin form for the singleton Profile doc | `src/components/admin/profile-editor.tsx` |
+| `VisitorStats` | Admin visitor count + recent visits table | `src/components/admin/visitor-stats.tsx` |
