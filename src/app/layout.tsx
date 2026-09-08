@@ -1,11 +1,11 @@
 import Navbar from "@/components/navbar";
-import VisitorTracker from "@/components/visitor-tracker";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { DATA } from "@/data/resume";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const personSchema = {
@@ -128,8 +128,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const adminPath = process.env.ADMIN_ROUTE_PATH || "admin-secret-access";
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -149,9 +147,9 @@ export default function RootLayout({
               {children}
             </div>
             <Navbar />
-            <VisitorTracker adminPath={adminPath} />
           </TooltipProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );

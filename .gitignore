@@ -34,9 +34,6 @@ yarn-error.log*
 # vercel
 .vercel
 
-# runtime-generated visitor analytics log
-/src/data/visitors.json
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts

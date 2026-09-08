@@ -42,13 +42,7 @@ src/
 │   │   ├── [slug]/              # Individual blog posts
 │   │   └── opengraph-image.tsx  # OG images for blogs
 │   ├── api/                     # API Routes
-│   │   ├── contact/route.ts     # Contact form endpoint
-│   │   ├── visitor/route.ts     # Visitor tracking
-│   │   └── admin/               # Admin dashboard API
-│   │       ├── auth/route.ts
-│   │       └── blogs/route.ts
-│   ├── certifications/          # Certifications page
-│   └── [adminPath]/             # Admin dashboard page
+│   │   └── contact/route.ts     # Contact form endpoint
 │
 ├── components/                   # Reusable Components
 │   ├── ui/                      # Basic UI Components (shadcn)
@@ -72,17 +66,14 @@ src/
 │   ├── mdx/                     # MDX-specific components
 │   │   ├── code-block.tsx       # Syntax highlighted code
 │   │   └── media-container.tsx
-│   ├── admin-dashboard.tsx      # Admin panel
 │   ├── navbar.tsx               # Navigation bar
 │   ├── icons.tsx                # Icon exports
 │   ├── mode-toggle.tsx          # Theme toggle
 │   ├── theme-provider.tsx       # Theme provider
-│   ├── project-card.tsx         # Project card component
-│   └── visitor-tracker.tsx      # Visitor analytics
+│   └── project-card.tsx         # Project card component
 │
 ├── data/
-│   ├── resume.tsx               # 📝 MAIN DATA FILE - All portfolio content
-│   └── visitors.json            # Visitor data
+│   └── resume.tsx               # 📝 MAIN DATA FILE - All portfolio content
 │
 ├── lib/
 │   ├── utils.ts                 # Utility functions
@@ -349,10 +340,8 @@ pnpm lint:fix
 
 ---
 
-## 📊 Visitor Analytics
-**File**: [src/data/visitors.json](src/data/visitors.json)
-
-Tracks visitor data using the visitor-tracker component. API endpoint at `src/app/api/visitor/route.ts`
+## 📊 Analytics
+Pageview analytics run through [`@vercel/analytics`](https://vercel.com/docs/analytics), wired into `src/app/layout.tsx` via `<Analytics />`. Enable it in the Vercel dashboard's **Analytics** tab after deploying — no database or extra config needed. (There used to be a homegrown file-based visitor tracker; it wrote to a local JSON file, which doesn't work on Vercel's read-only serverless filesystem, so it was replaced with this.)
 
 ---
 
@@ -386,12 +375,9 @@ Uses Nodemailer to send emails. Configure:
 
 ## 🚀 Deployment Tips
 
-The site is ready to deploy on:
-- **Vercel** (Recommended - optimized for Next.js)
-- **Netlify**
-- **AWS**, **Azure**, **Google Cloud**
+This site deploys on **Vercel** — see the [README](README.md#deploying-on-vercel) for the full steps (import the repo, set env vars from `.env.example`, deploy).
 
-Update the `url` field in [resume.tsx](src/data/resume.tsx) to your production domain.
+Update the `url` field in [resume.tsx](src/data/resume.tsx) to your production domain once Vercel assigns/attaches it, then enable the **Analytics** tab in the Vercel dashboard for pageview tracking.
 
 ---
 
