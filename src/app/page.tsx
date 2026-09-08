@@ -50,12 +50,12 @@ export default async function Page() {
             <p className="flex flex-nowrap items-center gap-x-2 overflow-x-auto text-sm font-semibold text-foreground sm:text-base md:text-lg [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
               <span className="shrink-0">Full Stack Developer</span>
               <span className="shrink-0 font-normal text-muted-foreground">|</span>
-              <span className="animate-open-badge inline-flex shrink-0 items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-2 py-0.5 text-xs font-medium sm:gap-2 sm:px-3 sm:py-1 sm:text-sm">
+              <span className="animate-open-badge inline-flex shrink-0 items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2 py-0.5 text-xs font-medium sm:gap-2 sm:px-3 sm:py-1 sm:text-sm">
                 <span className="relative flex size-2">
-                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-75" />
-                  <span className="relative inline-flex size-2 rounded-full bg-primary" />
+                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
                 </span>
-                <span className="animate-shimmer whitespace-nowrap bg-gradient-to-r from-primary via-primary/50 to-primary bg-[length:200%_100%] bg-clip-text text-transparent">
+                <span className="animate-shimmer whitespace-nowrap bg-gradient-to-r from-emerald-700 via-emerald-500 to-emerald-700 bg-[length:200%_100%] bg-clip-text text-transparent dark:from-emerald-300 dark:via-emerald-400 dark:to-emerald-300">
                   Open for Opportunities
                 </span>
               </span>

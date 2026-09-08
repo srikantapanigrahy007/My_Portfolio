@@ -288,10 +288,10 @@
 @keyframes open-badge {
   0%,
   100% {
-    box-shadow: 0 0 0 0 color-mix(in oklch, var(--primary) 0%, transparent);
+    box-shadow: 0 0 0 0 rgb(16 185 129 / 0%);
   }
   50% {
-    box-shadow: 0 0 0 4px color-mix(in oklch, var(--primary) 12%, transparent);
+    box-shadow: 0 0 0 4px rgb(16 185 129 / 0.12);
   }
 }
 
