@@ -1,0 +1,320 @@
+---
+title: "How to Deploy a Website on AWS EC2 (Step-by-Step Guide)"
+publishedAt: "2026-07-01"
+summary: "Learn how to deploy a React, Next.js, Node.js, or MERN application on an AWS EC2 instance using Nginx, PM2, SSL, and a custom domain."
+description: "Learn how to deploy a React, Next.js, Node.js, or MERN application on an AWS EC2 instance using Nginx, PM2, SSL, and a custom domain."
+author: "Srikanta Panigrahy"
+tags:
+  - AWS
+  - EC2
+  - Nginx
+  - PM2
+  - Node.js
+  - Next.js
+  - DevOps
+---
+
+# How to Deploy a Website on AWS EC2 Instance
+
+Deploying your own application on an AWS EC2 instance gives you full control over your infrastructure. In this guide, you'll learn how to deploy a Node.js, React, Next.js, or MERN application on an Ubuntu server using **PM2**, **Nginx**, and **Let's Encrypt SSL**.
+
+---
+
+## Architecture
+
+```text
+Internet
+   │
+   ▼
+Domain (Route53 / Cloudflare)
+   │
+   ▼
+Nginx (80 / 443)
+   │
+   ▼
+PM2
+   │
+   ▼
+Node.js Application (Port 3000)
+```
+
+---
+
+# Prerequisites
+
+- AWS account
+- Ubuntu EC2 instance
+- SSH key pair (.pem)
+- GitHub repository
+- Domain name (optional)
+
+# Step 1: Launch an EC2 Instance
+
+1. Open the AWS Console.
+2. Navigate to **EC2 → Launch Instance**.
+3. Configure:
+   - Ubuntu Server 24.04 LTS
+   - t2.micro (Free Tier)
+   - Create or select a key pair
+   - 20 GB storage
+
+## Security Group
+
+| Port | Purpose |
+|------|---------|
+|22|SSH|
+|80|HTTP|
+|443|HTTPS|
+|3000|Optional (development only)|
+
+# Step 2: Connect to the Server
+
+```bash
+chmod 400 mykey.pem
+
+ssh -i mykey.pem ubuntu@YOUR_PUBLIC_IP
+```
+
+# Step 3: Update Ubuntu
+
+```bash
+sudo apt update
+sudo apt upgrade -y
+```
+
+# Step 4: Install Git
+
+```bash
+sudo apt install git -y
+git --version
+```
+
+# Step 5: Install Node.js
+
+```bash
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt install nodejs -y
+
+node -v
+npm -v
+```
+
+# Step 6: Install PM2
+
+```bash
+sudo npm install -g pm2
+
+pm2 -v
+```
+
+# Step 7: Clone Your Project
+
+```bash
+git clone https://github.com/your-username/your-project.git
+
+cd your-project
+```
+
+# Step 8: Install Dependencies
+
+```bash
+npm install
+```
+
+# Step 9: Configure Environment Variables
+
+```bash
+nano .env
+```
+
+Example:
+
+```env
+PORT=3000
+MONGODB_URI=your_mongodb_uri
+JWT_SECRET=your_secret
+NODE_ENV=production
+```
+
+# Step 10: Build the Project
+
+For Next.js:
+
+```bash
+npm run build
+```
+
+For React (Vite):
+
+```bash
+npm run build
+```
+
+# Step 11: Start with PM2
+
+```bash
+pm2 start npm --name myapp -- start
+```
+
+Or Express:
+
+```bash
+pm2 start server.js
+```
+
+Useful commands:
+
+```bash
+pm2 list
+pm2 logs
+pm2 restart myapp
+pm2 save
+pm2 startup
+```
+
+# Step 12: Install Nginx
+
+```bash
+sudo apt install nginx -y
+```
+
+Enable:
+
+```bash
+sudo systemctl enable nginx
+sudo systemctl start nginx
+```
+
+# Step 13: Configure Nginx
+
+```bash
+sudo nano /etc/nginx/sites-available/myapp
+```
+
+Configuration:
+
+```nginx
+server {
+
+    listen 80;
+
+    server_name example.com www.example.com;
+
+    location / {
+
+        proxy_pass http://localhost:3000;
+
+        proxy_http_version 1.1;
+
+        proxy_set_header Upgrade $http_upgrade;
+
+        proxy_set_header Connection "upgrade";
+
+        proxy_set_header Host $host;
+
+        proxy_cache_bypass $http_upgrade;
+    }
+
+}
+```
+
+Enable it:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/myapp /etc/nginx/sites-enabled/
+
+sudo nginx -t
+
+sudo systemctl reload nginx
+```
+
+# Step 14: Point Your Domain
+
+Create an **A Record** pointing your domain to the EC2 public IP.
+
+# Step 15: Install SSL
+
+```bash
+sudo apt install certbot python3-certbot-nginx -y
+
+sudo certbot --nginx
+```
+
+Verify:
+
+```bash
+https://yourdomain.com
+```
+
+# Step 16: Firewall
+
+```bash
+sudo ufw allow OpenSSH
+sudo ufw allow 'Nginx Full'
+sudo ufw enable
+```
+
+# Deploy Updates
+
+```bash
+git pull
+
+npm install
+
+npm run build
+
+pm2 restart myapp
+```
+
+# Common Errors
+
+## 502 Bad Gateway
+
+- Ensure PM2 is running.
+- Verify `proxy_pass` matches the application port.
+- Restart Nginx.
+
+## Port Already in Use
+
+```bash
+sudo lsof -i :3000
+kill -9 PID
+```
+
+## PM2 Crash
+
+```bash
+pm2 logs
+```
+
+# Best Practices
+
+- Never commit `.env` files.
+- Keep Ubuntu updated.
+- Use HTTPS.
+- Enable automatic PM2 startup.
+- Monitor logs.
+- Back up your database.
+- Use Cloudflare for CDN and DDoS protection.
+
+# Deployment Checklist
+
+- Launch EC2
+- Configure Security Groups
+- SSH into server
+- Install Git
+- Install Node.js
+- Install PM2
+- Clone repository
+- Install dependencies
+- Configure `.env`
+- Build application
+- Start with PM2
+- Configure Nginx
+- Point domain
+- Install SSL
+- Test deployment
+
+# Conclusion
+
+By combining AWS EC2, Nginx, PM2, and Let's Encrypt, you can deploy a production-ready web application that is secure, scalable, and easy to maintain.
