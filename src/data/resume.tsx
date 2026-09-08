@@ -187,27 +187,6 @@ export const DATA = {
       video:
         "https://res.cloudinary.com/dbodedzho/video/upload/v1782919419/credo_dkhxp0.mp4",
     },
-    {
-      title: "Web Service Quality Classification",
-      href: "",
-      active: true,
-      description:
-        "A machine learning application that classifies web services based on Quality of Service (QoS) parameters using a semi-supervised learning approach with CatBoost. Built an interactive HTML/CSS frontend for users to submit QoS parameters, integrated with Flask to enable real-time prediction and classification through a web interface.",
-      dates: "2025",
-      technologies: [
-        "Python",
-        "CatBoost",
-        "Scikit-learn",
-        "Flask",
-        "HTML",
-        "CSS",
-        "Machine Learning",
-        "Semi-Supervised Learning",
-      ],
-      links: [],
-      image: "",
-      video: "",
-    },
   ],
   hackathons: [],
 } as const;
