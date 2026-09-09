@@ -103,6 +103,16 @@ export default function ContactSection() {
                     I have received your request and I will get back to you ASAP.
                   </p>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSuccess(false);
+                    setStatus("");
+                  }}
+                  className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+                >
+                  Send another message
+                </button>
               </motion.div>
             ) : (
               <motion.form
