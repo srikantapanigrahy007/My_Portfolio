@@ -47,7 +47,7 @@ export default function ContactSection() {
   };
 
   return (
-    <div className="border rounded-xl p-10 relative">
+    <div className="border rounded-xl p-10 relative transition-transform duration-300 ease-out will-change-transform hover:shadow-2xl hover:shadow-primary/15 hover:[transform:rotateX(2deg)_translateY(-6px)_scale(1.01)]">
       <div className="absolute -top-4 border bg-primary z-10 rounded-xl px-4 py-1 left-1/2 -translate-x-1/2">
         <span className="text-background text-sm font-medium">Contact</span>
       </div>

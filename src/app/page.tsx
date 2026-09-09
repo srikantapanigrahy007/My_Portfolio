@@ -32,6 +32,7 @@ export default async function Page() {
       <section id="hero">
         <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
           <div className="order-2 flex min-w-0 flex-1 flex-col gap-4 md:order-1">
+            <BlurFade delay={0}>
             <div className="space-y-1">
               <p className="text-3xl font-bold tracking-tight sm:text-4xl">
                 <span
@@ -92,7 +93,7 @@ export default async function Page() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="GitHub"
-                    className="inline-flex size-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    className="inline-flex size-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-all duration-200 hover:scale-110 hover:bg-muted hover:text-foreground"
                   >
                     <Icons.github className="size-4" />
                   </Link>
@@ -103,7 +104,7 @@ export default async function Page() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="LinkedIn"
-                    className="inline-flex size-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    className="inline-flex size-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-all duration-200 hover:scale-110 hover:bg-muted hover:text-foreground"
                   >
                     <Icons.linkedin className="size-4" />
                   </Link>
@@ -114,30 +115,36 @@ export default async function Page() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="X (Twitter)"
-                    className="inline-flex size-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    className="inline-flex size-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-all duration-200 hover:scale-110 hover:bg-muted hover:text-foreground"
                   >
                     <Icons.x className="size-4" />
                   </Link>
                 )}
               </div>
             </div>
+            </BlurFade>
           </div>
           <div className="order-1 flex shrink-0 justify-center md:order-2 md:justify-end">
-            <Image
-              src={profile.avatarUrl}
-              alt={profile.name}
-              width={192}
-              height={192}
-              priority
-              className="size-40 rounded-full border border-border object-cover md:size-48"
-            />
+            <BlurFade delay={BLUR_FADE_DELAY}>
+              <Image
+                src={profile.avatarUrl}
+                alt={profile.name}
+                width={192}
+                height={192}
+                priority
+                className="size-40 rounded-full border border-border object-cover transition-transform duration-300 hover:scale-105 md:size-48"
+              />
+            </BlurFade>
           </div>
         </div>
       </section>
-      <section id="about">
-        <div className="flex min-h-0 flex-col gap-y-4">
+      <section id="about" className="[perspective:1000px]">
+        <div className="flex min-h-0 flex-col gap-y-4 rounded-xl border border-border p-6 transition-transform duration-300 ease-out will-change-transform hover:shadow-2xl hover:shadow-primary/15 hover:[transform:rotateX(2deg)_translateY(-6px)_scale(1.015)]">
           <BlurFade delay={BLUR_FADE_DELAY * 3}>
-            <h2 className="text-xl font-bold">About</h2>
+            <h2 className="flex items-center gap-2.5 text-xl font-bold">
+              <span className="h-5 w-1 rounded-full bg-primary" aria-hidden />
+              About
+            </h2>
           </BlurFade>
           <BlurFade delay={BLUR_FADE_DELAY * 4}>
             <div className="prose max-w-full text-pretty font-sans leading-relaxed text-muted-foreground dark:prose-invert">
@@ -146,29 +153,35 @@ export default async function Page() {
           </BlurFade>
         </div>
       </section>
-      <section id="work">
-        <div className="flex min-h-0 flex-col gap-y-6">
-          <BlurFade delay={BLUR_FADE_DELAY * 5}>
-            <h2 className="text-xl font-bold">Professional Training and Work Experience</h2>
+      <section id="work" className="[perspective:1000px]">
+        <div className="flex min-h-0 flex-col gap-y-6 rounded-xl border border-border p-6 transition-transform duration-300 ease-out will-change-transform hover:shadow-2xl hover:shadow-primary/15 hover:[transform:rotateX(2deg)_translateY(-6px)_scale(1.015)]">
+          <BlurFade inView delay={0}>
+            <h2 className="flex items-center gap-2.5 text-xl font-bold">
+              <span className="h-5 w-1 rounded-full bg-primary" aria-hidden />
+              Professional Training and Work Experience
+            </h2>
           </BlurFade>
-          <BlurFade delay={BLUR_FADE_DELAY * 6}>
+          <BlurFade inView delay={BLUR_FADE_DELAY}>
             <WorkSection experience={experience} />
           </BlurFade>
         </div>
       </section>
-      <section id="education">
-        <div className="flex min-h-0 flex-col gap-y-6">
-          <BlurFade delay={BLUR_FADE_DELAY * 7}>
-            <h2 className="text-xl font-bold">Education</h2>
+      <section id="education" className="[perspective:1000px]">
+        <div className="flex min-h-0 flex-col gap-y-6 rounded-xl border border-border p-6 transition-transform duration-300 ease-out will-change-transform hover:shadow-2xl hover:shadow-primary/15 hover:[transform:rotateX(2deg)_translateY(-6px)_scale(1.015)]">
+          <BlurFade inView delay={0}>
+            <h2 className="flex items-center gap-2.5 text-xl font-bold">
+              <span className="h-5 w-1 rounded-full bg-primary" aria-hidden />
+              Education
+            </h2>
           </BlurFade>
           <div className="flex flex-col gap-8">
             {education.map((edu, index) => (
-              <BlurFade key={edu._id} delay={BLUR_FADE_DELAY * 8 + index * 0.05}>
+              <BlurFade inView key={edu._id} delay={index * 0.05}>
                 <Link
                   href={edu.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-x-3 justify-between group"
+                  className="flex items-center gap-x-3 justify-between group rounded-lg -mx-2 -my-1 px-2 py-1 transition-colors hover:bg-muted/50"
                 >
                   <div className="flex items-center gap-x-3 flex-1 min-w-0">
                     {edu.logoUrl ? (
@@ -203,13 +216,16 @@ export default async function Page() {
       </section>
       <section id="certifications">
         <div className="flex min-h-0 flex-col gap-y-6">
-          <BlurFade delay={BLUR_FADE_DELAY * 8.5}>
-            <h2 className="text-xl font-bold">Certifications</h2>
+          <BlurFade inView delay={0}>
+            <h2 className="flex items-center gap-2.5 text-xl font-bold">
+              <span className="h-5 w-1 rounded-full bg-primary" aria-hidden />
+              Certifications
+            </h2>
           </BlurFade>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 [perspective:1000px]">
             {certifications.map((cert, index) => (
-              <BlurFade key={cert._id} delay={BLUR_FADE_DELAY * 8.7 + index * 0.05}>
-                <div className="rounded-xl border border-border p-4">
+              <BlurFade inView key={cert._id} delay={index * 0.05}>
+                <div className="rounded-xl border border-border p-4 transition-transform duration-300 ease-out will-change-transform hover:ring-2 hover:ring-primary/30 hover:shadow-xl hover:shadow-primary/15 hover:[transform:rotateX(3deg)_translateY(-4px)_scale(1.02)]">
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-semibold leading-none">{cert.name}</span>
                   </div>
@@ -227,13 +243,16 @@ export default async function Page() {
       </section>
       <section id="skills">
         <div className="flex min-h-0 flex-col gap-y-4">
-          <BlurFade delay={BLUR_FADE_DELAY * 9}>
-            <h2 className="text-xl font-bold">Skills</h2>
+          <BlurFade inView delay={0}>
+            <h2 className="flex items-center gap-2.5 text-xl font-bold">
+              <span className="h-5 w-1 rounded-full bg-primary" aria-hidden />
+              Skills
+            </h2>
           </BlurFade>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 [perspective:1000px]">
             {skills.map((skill, id) => (
-              <BlurFade key={skill._id} delay={BLUR_FADE_DELAY * 10 + id * 0.05}>
-                <div className="border bg-background border-border ring-2 ring-border/20 rounded-xl h-8 w-fit px-4 flex items-center gap-2">
+              <BlurFade inView key={skill._id} delay={id * 0.03}>
+                <div className="border bg-background border-border ring-2 ring-border/20 rounded-xl h-8 w-fit px-4 flex items-center gap-2 transition-transform duration-200 ease-out will-change-transform hover:border-primary/40 hover:ring-primary/30 hover:shadow-md hover:shadow-primary/10 hover:[transform:rotateX(4deg)_translateY(-3px)_scale(1.06)]">
                   {skillIconMap[skill.icon] && (
                     <FontAwesomeIcon
                       icon={skillIconMap[skill.icon]}
@@ -248,17 +267,17 @@ export default async function Page() {
         </div>
       </section>
       <section id="projects">
-        <BlurFade delay={BLUR_FADE_DELAY * 11}>
+        <BlurFade inView delay={0}>
           <ProjectsSection projects={projects} />
         </BlurFade>
       </section>
-      <section id="github">
-        <BlurFade delay={BLUR_FADE_DELAY * 13}>
+      <section id="github" className="[perspective:1000px]">
+        <BlurFade inView delay={0}>
           <GithubSection githubUrl={github?.url || ""} />
         </BlurFade>
       </section>
-      <section id="contact">
-        <BlurFade delay={BLUR_FADE_DELAY * 16}>
+      <section id="contact" className="[perspective:1000px]">
+        <BlurFade inView delay={0}>
           <ContactSection />
         </BlurFade>
       </section>

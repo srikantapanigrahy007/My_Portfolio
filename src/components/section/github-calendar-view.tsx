@@ -42,7 +42,7 @@ export default function GithubCalendarView({ data }: { data: CalendarData }) {
   const { username, githubUrl, total, longestStreak, bestDay, weeks, monthLabels } = data;
 
   return (
-    <div className="w-full rounded-2xl border border-border/80 bg-card p-6 shadow-xs flex flex-col gap-6">
+    <div className="w-full rounded-2xl border border-border/80 bg-card p-6 shadow-xs flex flex-col gap-6 transition-transform duration-300 ease-out will-change-transform hover:shadow-2xl hover:shadow-primary/15 hover:[transform:rotateX(1.5deg)_translateY(-5px)_scale(1.01)]">
       {/* Top Header Row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         {/* Left: GitHub Profile Info */}

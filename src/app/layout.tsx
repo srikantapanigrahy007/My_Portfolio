@@ -1,4 +1,6 @@
 import Navbar from "@/components/navbar";
+import ScrollProgress from "@/components/scroll-progress";
+import BackToTop from "@/components/back-to-top";
 import VisitorTracker from "@/components/visitor-tracker";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -143,9 +145,11 @@ export default async function RootLayout({
         />
         <ThemeProvider attribute="class" defaultTheme="light">
           <TooltipProvider delayDuration={0}>
+            <ScrollProgress />
             <div className="relative z-10 max-w-2xl mx-auto py-12 pb-24 sm:py-24 px-6">
               {children}
             </div>
+            <BackToTop />
             <Navbar socials={socials} />
           </TooltipProvider>
         </ThemeProvider>
