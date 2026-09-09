@@ -51,3 +51,4 @@ or `.env` needed. Good to run after any route/model change.
 
 - Render's free instance spins down after inactivity; the first request after idle can take ~30-60s to wake it up. The frontend's `getPortfolioData()` falls back to static content if the API doesn't respond in time, so the site still renders — it just won't reflect the latest admin edits until the backend wakes up.
 - `JWT_SECRET` must be a real secret in production — generate one with `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`.
+- If local dev on Windows fails to connect with `querySrv ECONNREFUSED` against an `mongodb+srv://` URI, that's a known Node.js/Windows DNS resolver bug, not a bad connection string — `db.js` already points Node's resolver at public DNS (`8.8.8.8`, `1.1.1.1`) to work around it.
