@@ -1,6 +1,5 @@
 import { Router } from "express";
 import rateLimit from "express-rate-limit";
-import nodemailer from "nodemailer";
 import Profile from "../models/Profile.js";
 
 const router = Router();
@@ -26,11 +25,8 @@ router.post("/", contactLimiter, async (req, res) => {
         .json({ message: "Please complete all fields before sending." });
     }
 
-    const smtpHost = process.env.SMTP_HOST?.trim();
-    const smtpPort = Number(process.env.SMTP_PORT || 587);
-    const smtpUser = process.env.SMTP_USER?.trim();
-    const smtpPass = process.env.SMTP_PASS?.replace(/\s+/g, "").trim();
-    const smtpFrom = process.env.SMTP_FROM?.trim() || smtpUser;
+    const resendApiKey = process.env.RESEND_API_KEY?.trim();
+    const emailFrom = process.env.EMAIL_FROM?.trim() || "onboarding@resend.dev";
 
     let recipientEmail = process.env.CONTACT_TO_EMAIL?.trim();
     if (!recipientEmail) {
@@ -38,27 +34,41 @@ router.post("/", contactLimiter, async (req, res) => {
       recipientEmail = profile?.email;
     }
 
-    if (!smtpHost || !smtpUser || !smtpPass || !recipientEmail) {
+    if (!resendApiKey || !recipientEmail) {
       return res.status(500).json({
         message:
-          "Email delivery is not configured yet. Add SMTP settings to your environment to enable form submissions.",
+          "Email delivery is not configured yet. Add RESEND_API_KEY to your environment to enable form submissions.",
       });
     }
 
-    const transporter = nodemailer.createTransport({
-      host: smtpHost,
-      port: smtpPort,
-      secure: smtpPort === 465,
-      auth: { user: smtpUser, pass: smtpPass },
-    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
 
-    await transporter.sendMail({
-      from: smtpFrom,
-      to: recipientEmail,
-      replyTo: email,
-      subject: `New message from ${name}`,
-      text: [`Name: ${name}`, `Email: ${email}`, "", message].join("\n"),
-    });
+    let response;
+    try {
+      response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: `Portfolio Contact <${emailFrom}>`,
+          to: [recipientEmail],
+          reply_to: email,
+          subject: `New message from ${name}`,
+          text: [`Name: ${name}`, `Email: ${email}`, "", message].join("\n"),
+        }),
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      throw new Error(`Resend API error (${response.status}): ${errorBody}`);
+    }
 
     res.json({ message: "Your message has been sent successfully." });
   } catch (error) {

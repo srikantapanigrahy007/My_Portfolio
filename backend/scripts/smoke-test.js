@@ -101,13 +101,13 @@ async function main() {
     const stats = await statsRes.json();
     assert(statsRes.status === 200 && stats.total === 1, "visitor total counted correctly");
 
-    console.log("Contact route (no SMTP configured -> graceful 500)");
+    console.log("Contact route (no RESEND_API_KEY configured -> graceful 500)");
     const contactRes = await fetch(`${BASE}/api/contact`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: "Test", email: "t@example.com", message: "Hi" }),
     });
-    assert(contactRes.status === 500, "contact without SMTP config -> 500 (expected, not configured)");
+    assert(contactRes.status === 500, "contact without Resend config -> 500 (expected, not configured)");
 
     console.log("\nAll smoke tests passed.");
   } finally {

@@ -35,7 +35,7 @@ or `.env` needed. Good to run after any route/model change.
    - **Runtime**: Node
    - **Build Command**: `npm install`
    - **Start Command**: `npm start`
-4. Add environment variables (see `.env.example`): `MONGODB_URI`, `JWT_SECRET`, `ADMIN_PASSWORD` (or `ADMIN_PASSWORD_HASH`), `FRONTEND_URL` (your Vercel URL), `SMTP_*`, `CONTACT_TO_EMAIL`.
+4. Add environment variables (see `.env.example`): `MONGODB_URI`, `JWT_SECRET`, `ADMIN_PASSWORD` (or `ADMIN_PASSWORD_HASH`), `FRONTEND_URL` (your Vercel URL), `RESEND_API_KEY`, `EMAIL_FROM`, `CONTACT_TO_EMAIL`.
 5. Deploy. Render gives you a URL like `https://your-service.onrender.com`.
 6. Run the seed script once against production, either locally with `MONGODB_URI` pointed at Atlas (`npm run seed`), or via Render's shell.
 7. On the frontend (Vercel), set `NEXT_PUBLIC_API_URL` to the Render URL and redeploy.
