@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { getProfile, updateProfile, type Profile } from "@/lib/api";
 
-const SOCIAL_ICON_OPTIONS = ["github", "linkedin", "x", "email", "globe"];
+const SOCIAL_ICON_OPTIONS = ["github", "linkedin", "x", "email", "whatsapp", "globe"];
 
 export function ProfileEditor({ token }: { token: string }) {
   const [profile, setProfile] = useState<Profile | null>(null);

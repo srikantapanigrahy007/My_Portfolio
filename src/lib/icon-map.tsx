@@ -41,6 +41,7 @@ export const linkIconMap: Record<string, keyof typeof Icons> = {
   linkedin: "linkedin",
   x: "x",
   email: "email",
+  whatsapp: "whatsapp",
   globe: "globe",
 };
 
