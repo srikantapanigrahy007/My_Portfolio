@@ -1,0 +1,87 @@
+---
+title: "Building Miyora LifeStyle: A Multi-Vendor E-Commerce Platform on MERN"
+publishedAt: "2026-09-14"
+summary: "How I built Miyora LifeStyle, a multi-vendor e-commerce platform with separate customer, seller, and admin experiences, using the MERN stack, Zustand, TanStack Query, and Razorpay."
+description: "How I built Miyora LifeStyle, a multi-vendor e-commerce platform with separate customer, seller, and admin experiences, using the MERN stack, Zustand, TanStack Query, and Razorpay."
+author: "Srikanta Panigrahy"
+tags:
+  - React
+  - Node.js
+  - Express
+  - MongoDB
+  - Socket.io
+  - Razorpay
+  - Zustand
+  - TanStack Query
+---
+
+# Building Miyora LifeStyle: A Multi-Vendor E-Commerce Platform
+
+[Miyora LifeStyle](https://miyora-lifestyle.vercel.app/) is a production-ready, multi-vendor e-commerce platform built on the MERN stack. Unlike a typical single-storefront project, it has to serve three very different kinds of users from one codebase: **customers** browsing and buying, **sellers** managing their own products and orders, and **admins** overseeing the whole marketplace.
+
+That three-way split ended up being the most interesting engineering problem in the whole project.
+
+---
+
+## Architecture
+
+```text
+Client (React + Zustand + TanStack Query)
+   │
+   ▼
+REST API (Express + JWT auth)
+   │
+   ├── Customer routes   → browse, cart, checkout, reviews
+   ├── Seller routes     → product/inventory CRUD, seller orders
+   ├── Admin routes      → user/seller management, platform-wide orders
+   │
+   ▼
+MongoDB (products, orders, users, reviews)
+   │
+   ▼
+Razorpay (payments)   +   Socket.io (order/status updates)
+```
+
+Three roles, one Express app, one MongoDB — the separation happens entirely in the auth and routing layer, not by running three different services.
+
+## The Hard Part: Role-Based Access for Three Very Different Users
+
+The core challenge wasn't any single feature — it was making sure a customer could never accidentally hit a seller endpoint, a seller could never touch another seller's inventory, and only admins could see platform-wide data, all without duplicating business logic three times.
+
+The approach that worked:
+
+- **A single `role` field on the User model** (`customer`, `seller`, `admin`), set at signup and checked on every protected request.
+- **JWT payloads carry the role**, so the server never has to re-query the database just to know who's allowed to do what.
+- **Middleware, not per-route checks.** Instead of sprinkling `if (user.role !== "seller")` inside every controller, an `authorize("seller")` (or `authorize("seller", "admin")`) middleware sits in front of the route and rejects anything that doesn't match — the controller only ever runs for a caller who's already allowed to be there.
+- **Ownership checks on top of role checks.** Being a "seller" isn't enough to edit *any* product — the update/delete handlers also verify the product's `sellerId` matches the authenticated user's id, so one seller can't modify another seller's listings just because they share a role.
+- **Separate dashboard shells on the frontend** for each role, gated by the same role claim, so a customer never even sees seller/admin navigation — it's not just hidden with CSS, the routes themselves refuse to render without the right role.
+
+The result is one Express app and one set of Mongoose models, but three cleanly separated permission surfaces — adding a fourth role later (say, a "support" role) would mean adding one more case to `authorize(...)`, not rewriting the auth system.
+
+## State Management: Zustand + TanStack Query, Not Redux
+
+For client state I went with **Zustand** for genuinely local/global UI state — cart contents, auth session, checkout step — and **TanStack Query** for anything that comes from the server: product listings, orders, reviews.
+
+The split matters because those two kinds of state behave differently:
+
+- Cart state doesn't need caching, background refetching, or invalidation — it just needs to live somewhere global and update fast. Zustand's minimal API (no providers, no boilerplate reducers) was enough.
+- Product/order data *does* need caching, refetching on window focus, and invalidation after a mutation (e.g. "refresh this product's stock after an order is placed") — that's exactly what TanStack Query is built for, and reimplementing it on top of `useState` and `useEffect` would have meant rebuilding a worse version of the same thing.
+
+Redux would have handled both, but at the cost of far more boilerplate for a two-person surface area (cart + auth) that didn't need it.
+
+## Payments and Real-Time Updates
+
+Checkout goes through **Razorpay**: an order is created server-side, the client opens Razorpay's checkout with that order id, and the payment is verified server-side against Razorpay's signature before the order is marked paid — the frontend is never trusted to declare a payment successful on its own.
+
+**Socket.io** handles the parts that shouldn't need a page refresh: sellers see new orders land in their dashboard in real time, and customers see order status changes (processing → shipped → delivered) update live.
+
+## What I'd Do Differently
+
+If I rebuilt this today, I'd move inventory decrement logic into a MongoDB transaction earlier rather than retrofitting it — with concurrent orders against low-stock items, a plain "check stock, then decrement" pattern has a race condition that only shows up under real concurrent load, not in manual testing.
+
+## Tech Stack
+
+React, JavaScript, Node.js, Express.js, MongoDB, Socket.io, TailwindCSS, Razorpay, Zustand, TanStack Query, REST APIs.
+
+- **Live site:** [miyora-lifestyle.vercel.app](https://miyora-lifestyle.vercel.app/)
+- **Source:** [github.com/srikantapanigrahy007/Miyora_LifeStyle](https://github.com/srikantapanigrahy007/Miyora_LifeStyle)
