@@ -15,6 +15,10 @@ async function main() {
   process.env.PORT = "4577";
   process.env.FRONTEND_URL = "http://localhost:3000";
   process.env.NODE_ENV = "test";
+  // Set (not delete): dotenv only fills in vars that are still unset when it
+  // loads, so a plain delete here would just let it repopulate from .env.
+  process.env.RESEND_API_KEY = "";
+  process.env.CONTACT_TO_EMAIL = "";
 
   const { start } = await import("../src/index.js");
   const server = await start();

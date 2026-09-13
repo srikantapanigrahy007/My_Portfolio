@@ -11,9 +11,16 @@ export function createCrudRouter(Model) {
     res.json(docs);
   });
 
+  const hasOrderField = !!Model.schema.path("order");
+
   router.post("/", requireAdmin, async (req, res) => {
     try {
-      const doc = await Model.create(req.body);
+      const body = { ...req.body };
+      if (hasOrderField && body.order === undefined) {
+        const last = await Model.findOne().sort({ order: -1 }).lean();
+        body.order = last ? last.order + 1 : 0;
+      }
+      const doc = await Model.create(body);
       res.status(201).json(doc);
     } catch (err) {
       res.status(400).json({ error: err.message });

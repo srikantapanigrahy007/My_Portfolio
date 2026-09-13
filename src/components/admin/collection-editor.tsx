@@ -60,6 +60,23 @@ export function CollectionEditor({
     await load();
   };
 
+  const handleMove = async (index: number, direction: -1 | 1) => {
+    if (!items) return;
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= items.length) return;
+
+    const current = items[index];
+    const target = items[targetIndex];
+    const currentOrder = current.order ?? index;
+    const targetOrder = target.order ?? targetIndex;
+
+    await Promise.all([
+      updateResource(resource, current._id as string, token, { order: targetOrder }),
+      updateResource(resource, target._id as string, token, { order: currentOrder }),
+    ]);
+    await load();
+  };
+
   return (
     <div className="flex flex-col gap-3">
       <h3 className="text-sm font-bold">{title}</h3>
@@ -68,7 +85,7 @@ export function CollectionEditor({
         <p className="text-xs text-muted-foreground">Loading...</p>
       ) : (
         <div className="flex flex-col gap-2">
-          {items.map((item) => (
+          {items.map((item, index) => (
             <div key={item._id as string} className="rounded-lg border border-border p-2">
               {editingId === item._id ? (
                 <RecordForm
@@ -81,7 +98,23 @@ export function CollectionEditor({
               ) : (
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-sm">{renderLabel(item)}</span>
-                  <div className="flex gap-2 text-xs">
+                  <div className="flex items-center gap-2 text-xs">
+                    <button
+                      onClick={() => handleMove(index, -1)}
+                      disabled={index === 0}
+                      className="text-muted-foreground hover:text-primary disabled:opacity-30 disabled:hover:text-muted-foreground"
+                      title="Move up"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      onClick={() => handleMove(index, 1)}
+                      disabled={index === items.length - 1}
+                      className="text-muted-foreground hover:text-primary disabled:opacity-30 disabled:hover:text-muted-foreground"
+                      title="Move down"
+                    >
+                      ↓
+                    </button>
                     <button
                       onClick={() => setEditingId(item._id as string)}
                       className="text-primary hover:underline"
