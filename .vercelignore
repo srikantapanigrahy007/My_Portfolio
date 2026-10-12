@@ -1,0 +1,6 @@
+# Frontend-only deploys: never upload the backend API or local secrets
+backend
+.env
+.env.*
+node_modules
+.next
