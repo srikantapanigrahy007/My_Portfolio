@@ -3,6 +3,11 @@
 import { useState, type FormEvent } from "react";
 import { submitContact, ApiError } from "@/lib/api";
 import { motion, AnimatePresence } from "motion/react";
+import SectionHeading from "@/components/section-heading";
+import { cn } from "@/lib/utils";
+
+const fieldClass =
+  "w-full rounded-[10px] border border-input bg-background px-4 py-3 text-sm font-normal text-foreground shadow-card outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted-foreground/70 hover:border-foreground/25 focus-visible:border-primary focus-visible:ring-4 focus-visible:ring-primary/15 focus-visible:outline-none";
 
 export default function ContactSection() {
   const [name, setName] = useState("");
@@ -47,21 +52,16 @@ export default function ContactSection() {
   };
 
   return (
-    <div className="border rounded-xl p-10 relative transition-transform duration-300 ease-out will-change-transform hover:shadow-2xl hover:shadow-primary/15 hover:[transform:rotateX(2deg)_translateY(-6px)_scale(1.01)]">
-      <div className="absolute -top-4 border bg-primary z-10 rounded-xl px-4 py-1 left-1/2 -translate-x-1/2">
-        <span className="text-background text-sm font-medium">Contact</span>
-      </div>
-      <div className="relative flex flex-col items-center gap-6 text-center">
-        <div className="space-y-3">
-          <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-            Send me a message
-          </h2>
-          <p className="mx-auto max-w-lg text-muted-foreground text-balance">
-            Fill out the form below and I&apos;ll get back to you as soon as possible.
-          </p>
-        </div>
+    <div className="surface p-6 sm:p-10">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-12">
+        <SectionHeading
+          eyebrow="Contact"
+          title="Send me a message"
+          description="Fill out the form below and I'll get back to you as soon as possible."
+          className="lg:pt-2"
+        />
 
-        <div className="w-full max-w-2xl min-h-[350px] flex items-center justify-center">
+        <div className="flex min-h-[350px] w-full items-center justify-center">
           <AnimatePresence mode="wait">
             {isSuccess ? (
               <motion.div
@@ -70,6 +70,7 @@ export default function ContactSection() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
+                role="status"
                 className="w-full py-12 flex flex-col items-center justify-center gap-5 text-center"
               >
                 <motion.div
@@ -109,7 +110,7 @@ export default function ContactSection() {
                     setIsSuccess(false);
                     setStatus("");
                   }}
-                  className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+                  className="rounded-sm text-sm font-medium text-accent-foreground underline-offset-4 hover:underline"
                 >
                   Send another message
                 </button>
@@ -130,7 +131,7 @@ export default function ContactSection() {
                       value={name}
                       onChange={(event) => setName(event.target.value)}
                       placeholder="John Doe"
-                      className="rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                      className={fieldClass}
                     />
                   </label>
                   <label className="flex flex-col gap-2 text-sm font-medium text-foreground">
@@ -140,7 +141,7 @@ export default function ContactSection() {
                       value={email}
                       onChange={(event) => setEmail(event.target.value)}
                       placeholder="john@example.com"
-                      className="rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                      className={fieldClass}
                     />
                   </label>
                 </div>
@@ -152,20 +153,20 @@ export default function ContactSection() {
                     onChange={(event) => setMessage(event.target.value)}
                     placeholder="Tell me about your project, idea, or question."
                     rows={6}
-                    className="rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className={cn(fieldClass, "resize-y")}
                   />
                 </label>
 
-                <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+                <div className="flex flex-col items-start gap-3 pt-1 sm:flex-row sm:items-center sm:gap-4">
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="inline-flex items-center justify-center rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-background transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
+                    className="inline-flex h-11 w-full items-center justify-center rounded-[10px] bg-primary px-6 text-[15px] font-semibold text-primary-foreground shadow-card transition-colors duration-200 hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
                   >
                     {isSubmitting ? "Sending..." : "Send Message"}
                   </button>
                   {status ? (
-                    <p className="text-sm text-muted-foreground">{status}</p>
+                    <p role="status" aria-live="polite" className="text-sm text-muted-foreground">{status}</p>
                   ) : null}
                 </div>
               </motion.form>

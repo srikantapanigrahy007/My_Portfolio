@@ -146,7 +146,7 @@ export default async function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="light">
           <TooltipProvider delayDuration={0}>
             <ScrollProgress />
-            <div className="relative z-10 max-w-2xl mx-auto py-12 pb-24 sm:py-24 px-6">
+            <div className="relative z-10 mx-auto w-full max-w-[calc(1100px+3rem)] px-6 pt-12 pb-36 sm:pt-20 lg:pt-24">
               {children}
             </div>
             <BackToTop />

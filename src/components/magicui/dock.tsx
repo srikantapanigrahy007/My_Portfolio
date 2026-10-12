@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { motion, type MotionValue, useMotionValue, useSpring, useTransform } from "motion/react";
+import { motion, type MotionValue, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
 import { createContext, useContext, useRef, type ReactNode } from "react";
 
 interface DockProps {
@@ -33,6 +33,9 @@ const DockContext = createContext<DockContextValue | null>(null);
 
 const Dock = ({ className, children, magnification = DEFAULT_MAGNIFICATION, distance = DEFAULT_DISTANCE }: DockProps) => {
   const mouseX = useMotionValue(Infinity);
+  // Skip the magnify effect when the user prefers reduced motion
+  const reduceMotion = useReducedMotion();
+  if (reduceMotion) magnification = BASE_SIZE;
 
   return (
     <DockContext.Provider value={{ mouseX, magnification, distance }}>
