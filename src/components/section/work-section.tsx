@@ -17,7 +17,7 @@ function LogoImage({ src, alt }: { src: string; alt: string }) {
 
   if (!src || imageError) {
     return (
-      <div className="size-10 sm:size-11 flex-none rounded-full border border-border bg-muted" />
+      <div className="size-8 md:size-10 p-1 border rounded-full shadow ring-2 ring-border bg-muted flex-none" />
     );
   }
 
@@ -25,7 +25,7 @@ function LogoImage({ src, alt }: { src: string; alt: string }) {
     <img
       src={src}
       alt={alt}
-      className="size-10 sm:size-11 flex-none overflow-hidden rounded-full border border-border bg-white object-contain p-1"
+      className="size-8 md:size-10 p-1 border rounded-full shadow ring-2 ring-border overflow-hidden object-contain flex-none"
       onError={() => setImageError(true)}
     />
   );
@@ -33,19 +33,19 @@ function LogoImage({ src, alt }: { src: string; alt: string }) {
 
 export default function WorkSection({ experience }: { experience: Experience[] }) {
   return (
-    <Accordion type="single" collapsible className="grid w-full gap-1">
+    <Accordion type="single" collapsible className="w-full grid gap-6">
       {experience.map((work) => (
         <AccordionItem
           key={work._id}
           value={work._id}
-          className="grid w-full rounded-xl border-b-0 transition-colors duration-200 has-[[data-state=open]]:bg-muted/60"
+          className="w-full border-b-0 grid gap-2"
         >
-          <AccordionTrigger className="group cursor-pointer rounded-xl p-3 hover:bg-muted hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-card [&>svg]:hidden">
-            <div className="flex w-full items-center justify-between gap-x-4 text-left">
-              <div className="flex min-w-0 flex-1 items-center gap-x-4">
+          <AccordionTrigger className="hover:no-underline p-0 cursor-pointer transition-colors rounded-none group [&>svg]:hidden">
+            <div className="flex items-center gap-x-3 justify-between w-full text-left">
+              <div className="flex items-center gap-x-3 flex-1 min-w-0">
                 <LogoImage src={work.logoUrl} alt={work.company} />
-                <div className="flex min-w-0 flex-1 flex-col gap-1">
-                  <div className="flex items-center gap-2 text-base font-semibold leading-snug text-foreground">
+                <div className="flex-1 min-w-0 gap-0.5 flex flex-col">
+                  <div className="font-semibold leading-none flex items-center gap-2">
                     {work.company}
                     <span className="relative inline-flex items-center w-3.5 h-3.5">
                       <ChevronRight
@@ -65,24 +65,21 @@ export default function WorkSection({ experience }: { experience: Experience[] }
                       />
                     </span>
                   </div>
-                  <div className="font-sans text-sm font-normal text-muted-foreground">
+                  <div className="font-sans text-sm font-semibold text-foreground">
                     {work.title}
-                  </div>
-                  <div className="text-xs tabular-nums font-normal text-muted-foreground sm:hidden">
-                    {work.start} - {work.end || "Present"}
                   </div>
                 </div>
               </div>
-              <div className="hidden flex-none items-center gap-1 text-right text-sm font-normal tabular-nums text-muted-foreground sm:flex">
+              <div className="flex items-center gap-1 text-xs tabular-nums text-muted-foreground text-right flex-none">
                 <span>
                   {work.start} - {work.end || "Present"}
                 </span>
               </div>
             </div>
           </AccordionTrigger>
-          <AccordionContent className="px-3 pb-4 pt-1 text-sm text-muted-foreground sm:pl-[4.5rem]">
+          <AccordionContent className="p-0 ml-13 text-xs sm:text-sm text-muted-foreground">
             {work.description ? (
-              <div className="prose prose-sm max-w-3xl text-pretty font-sans leading-relaxed text-muted-foreground dark:prose-invert">
+              <div className="prose max-w-full text-pretty font-sans leading-relaxed dark:prose-invert">
                 <Markdown>{work.description}</Markdown>
               </div>
             ) : null}

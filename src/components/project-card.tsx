@@ -13,15 +13,14 @@ function ProjectImage({ src, alt }: { src: string; alt: string }) {
   const [imageError, setImageError] = useState(false);
 
   if (!src || imageError) {
-    return <div className="size-full bg-muted" />;
+    return <div className="w-full h-48 bg-muted" />;
   }
 
   return (
     <img
       src={src}
       alt={alt}
-      loading="lazy"
-      className="size-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+      className="w-full h-48 object-cover"
       onError={() => setImageError(true)}
     />
   );
@@ -57,20 +56,18 @@ export function ProjectCard({
   className,
 }: Props) {
   return (
-    <article
+    <div
       className={cn(
-        "group surface flex h-full flex-col overflow-hidden transition-[box-shadow,border-color,transform] duration-300 ease-out hover:-translate-y-0.5 hover:border-foreground/15 hover:shadow-card-hover",
+        "flex flex-col h-full border border-border rounded-xl overflow-hidden cursor-pointer transition-transform duration-300 ease-out will-change-transform hover:ring-2 hover:ring-primary/30 hover:shadow-xl hover:shadow-primary/15 hover:[transform:rotateX(3deg)_translateY(-6px)_scale(1.02)]",
         className
       )}
     >
-      <div className="relative shrink-0 border-b border-border">
+      <div className="relative shrink-0">
         <Link
           href={href || "#"}
           target="_blank"
           rel="noopener noreferrer"
-          tabIndex={-1}
-          aria-hidden
-          className="block aspect-[16/10] w-full overflow-hidden bg-muted"
+          className="block"
         >
           {video ? (
             <video
@@ -79,16 +76,16 @@ export function ProjectCard({
               loop
               muted
               playsInline
-              className="size-full object-cover object-top"
+              className="w-full h-48 object-cover"
             />
           ) : image ? (
             <ProjectImage src={image} alt={title} />
           ) : (
-            <div className="size-full bg-muted" />
+            <div className="w-full h-48 bg-muted" />
           )}
         </Link>
         {links && links.length > 0 && (
-          <div className="absolute top-3 right-3 flex flex-wrap justify-end gap-2">
+          <div className="absolute top-2 right-2 flex flex-wrap gap-2">
             {links.map((link, idx) => {
               const LinkIcon = getSocialIcon(link.icon);
               return (
@@ -98,13 +95,12 @@ export function ProjectCard({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  className="rounded-full"
                 >
                   <Badge
-                    className="flex items-center gap-1.5 rounded-full border-white/10 bg-stone-900/85 px-2.5 py-1 text-xs font-medium text-white shadow-sm backdrop-blur-sm transition-colors hover:bg-stone-900"
+                    className="flex items-center gap-1.5 text-xs bg-black text-white hover:bg-black/90"
                     variant="default"
                   >
-                    <LinkIcon className="size-3" aria-hidden />
+                    <LinkIcon className="size-3" />
                     {link.type}
                   </Badge>
                 </Link>
@@ -113,40 +109,39 @@ export function ProjectCard({
           </div>
         )}
       </div>
-      <div className="flex flex-1 flex-col gap-4 p-6">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex min-w-0 flex-col gap-1">
-            <h3 className="text-lg font-semibold leading-snug tracking-tight text-foreground">
-              {title}
-            </h3>
-            <time className="text-xs font-medium text-muted-foreground">{dates}</time>
+      <div className="p-6 flex flex-col gap-3 flex-1">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex flex-col gap-1">
+            <h3 className="font-semibold">{title}</h3>
+            <time className="text-xs text-muted-foreground">{dates}</time>
           </div>
           <Link
             href={href || "#"}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors duration-200 hover:border-primary/40 hover:bg-accent hover:text-accent-foreground"
+            className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
             aria-label={`Open ${title}`}
           >
-            <ArrowUpRight className="size-4" aria-hidden />
+            <ArrowUpRight className="h-4 w-4" aria-hidden />
           </Link>
         </div>
-        <div className="prose prose-sm max-w-full flex-1 text-pretty font-sans leading-relaxed text-muted-foreground dark:prose-invert">
+        <div className="text-xs flex-1 prose max-w-full text-pretty font-sans leading-relaxed text-muted-foreground dark:prose-invert">
           <Markdown>{description}</Markdown>
         </div>
         {tags && tags.length > 0 && (
-          <ul className="mt-auto flex flex-wrap gap-1.5 pt-1">
+          <div className="flex flex-wrap gap-1 mt-auto">
             {tags.map((tag) => (
-              <li
+              <Badge
                 key={tag}
-                className="inline-flex h-6 items-center rounded-full border border-border bg-muted px-2.5 text-xs font-medium text-foreground/80"
+                className="text-[11px] font-medium border border-border h-6 w-fit px-2"
+                variant="outline"
               >
                 {tag}
-              </li>
+              </Badge>
             ))}
-          </ul>
+          </div>
         )}
       </div>
-    </article>
+    </div>
   );
 }

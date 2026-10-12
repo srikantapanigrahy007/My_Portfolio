@@ -88,7 +88,7 @@ export default function AdminPage() {
   if (!token) return <LoginForm onLogin={handleLogin} />;
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 pb-24">
+    <div className="flex flex-col gap-6 pb-24">
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-bold">Admin Dashboard</h1>
         <button onClick={handleLogout} className="text-xs text-muted-foreground hover:underline">
