@@ -23,7 +23,7 @@ export interface CalendarData {
 // Mint-to-emerald scale keyed to GitHub's per-day contribution level (0 = none, 4 = most).
 // Each level has a slightly darker border and a darker hover border; dark theme uses a deeper scale.
 const LEVEL_CLASSES: Record<number, string> = {
-  0: "bg-[#c6e8d8] border-[#d3eedf] hover:border-[#9fd8b9] dark:bg-[#12231b] dark:border-[#1b3428] dark:hover:border-[#2f5a45]",
+  0: "bg-[#eaf7f2] border-[#d3eedf] hover:border-[#9fd8b9] dark:bg-[#12231b] dark:border-[#1b3428] dark:hover:border-[#2f5a45]",
   1: "bg-[#d1fae5] border-[#a7f3d0] hover:border-[#6ee7b7] dark:bg-[#064e3b] dark:border-[#065f46] dark:hover:border-[#0a8a63]",
   2: "bg-[#6ee7b7] border-[#4fd6a2] hover:border-[#10b981] dark:bg-[#047857] dark:border-[#059669] dark:hover:border-[#34d399]",
   3: "bg-[#34d399] border-[#1fbf86] hover:border-[#059669] dark:bg-[#10b981] dark:border-[#34d399] dark:hover:border-[#6ee7b7]",
