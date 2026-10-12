@@ -20,12 +20,14 @@ export interface CalendarData {
   monthLabels: { month: string; colIndex: number }[];
 }
 
+// Mint-to-emerald scale keyed to GitHub's per-day contribution level (0 = none, 4 = most).
+// Each level has a slightly darker border and a darker hover border; dark theme uses a deeper scale.
 const LEVEL_CLASSES: Record<number, string> = {
-  0: "bg-[#ebedf0] dark:bg-[#21262d] border-[#d0d7de] dark:border-[#30363d] hover:border-zinc-500 dark:hover:border-zinc-400",
-  1: "bg-[#9be9a8] dark:bg-[#0e4429] border-[#7cdb8c] dark:border-[#006d32] hover:brightness-110",
-  2: "bg-[#40c463] dark:bg-[#006d32] border-[#33af54] dark:border-[#26a641] hover:brightness-110",
-  3: "bg-[#30a14e] dark:bg-[#26a641] border-[#25873f] dark:border-[#39d353] hover:brightness-110",
-  4: "bg-[#216e39] dark:bg-[#39d353] border-[#18532b] dark:border-[#56ff7a] hover:brightness-110",
+  0: "bg-[#8fcdb5] border-[#d3eedf] hover:border-[#9fd8b9] dark:bg-[#12231b] dark:border-[#1b3428] dark:hover:border-[#2f5a45]",
+  1: "bg-[#d1fae5] border-[#a7f3d0] hover:border-[#6ee7b7] dark:bg-[#064e3b] dark:border-[#065f46] dark:hover:border-[#0a8a63]",
+  2: "bg-[#6ee7b7] border-[#4fd6a2] hover:border-[#10b981] dark:bg-[#047857] dark:border-[#059669] dark:hover:border-[#34d399]",
+  3: "bg-[#34d399] border-[#1fbf86] hover:border-[#059669] dark:bg-[#10b981] dark:border-[#34d399] dark:hover:border-[#6ee7b7]",
+  4: "bg-[#059669] border-[#047857] hover:border-[#065f46] dark:bg-[#34d399] dark:border-[#6ee7b7] dark:hover:border-[#a7f3d0]",
 };
 
 function formatDate(dateStr: string) {
@@ -101,13 +103,15 @@ export default function GithubCalendarView({ data }: { data: CalendarData }) {
                       return <div key={`empty-${wIdx}-${dIdx}`} className="size-3 shrink-0" />;
                     }
 
-                    const levelClass = LEVEL_CLASSES[day.level] || LEVEL_CLASSES[0];
+                    // Days with zero contributions always render as level 0, matching the tooltip.
+                    const level = day.count === 0 ? 0 : day.level;
+                    const levelClass = LEVEL_CLASSES[level] ?? LEVEL_CLASSES[0];
 
                     return (
                       <Tooltip key={day.date}>
                         <TooltipTrigger asChild>
                           <div
-                            className={`size-3 shrink-0 rounded-[2.5px] border transition-[filter,border-color] duration-150 ${levelClass}`}
+                            className={`size-3 shrink-0 rounded-[2.5px] border transition-[background-color,border-color] duration-200 ease-out ${levelClass}`}
                           />
                         </TooltipTrigger>
                         <TooltipContent side="top" sideOffset={5} className="font-sans text-xs">
